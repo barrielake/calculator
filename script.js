@@ -30,3 +30,19 @@ function operate(operator, num1, num2){
             break;
     }
 }
+
+let screen = document.querySelector(".calculator-screen");
+let displayValue = "";
+
+function updateScreen(number){
+    displayValue += number;
+    screen.value = displayValue;
+}
+
+let numberButtons = document.querySelectorAll(".number");
+
+for (const numberButton of numberButtons){
+    numberButton.addEventListener("click", function(){
+        updateScreen(button.value);
+    });
+}
