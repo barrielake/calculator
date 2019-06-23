@@ -86,3 +86,12 @@ function clearAll(){
     answer = NaN;
     screen.value = "0";
 }
+
+let backspace = document.querySelector(".backspace");
+backspace.addEventListener("click", undo);
+
+function undo(){
+    if (currentNumber.length == 0) return;
+    currentNumber = currentNumber.slice(0,currentNumber.length - 1);
+    screen.value = currentNumber;
+}

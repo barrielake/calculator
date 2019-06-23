@@ -40,7 +40,7 @@ button{
 
 .equal-sign{
     grid-row-start: 2;
-    grid-row-end: 6;
+    grid-row-end: 5;
     grid-column-start: 4;
     height: 100%;
     background-color: #80CBC4;
