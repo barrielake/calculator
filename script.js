@@ -53,7 +53,7 @@ function updateScreen(number){
 operatorButtons.forEach((operatorButton) => 
     operatorButton.addEventListener("click", updateValues)); 
 
-function updateValues(){
+function updateValues(keyPressed){
     
     if (operator === "/" && currentNumber == 0){ //prevent division by zero
         alert("Don't divide by zero, dummy.");
@@ -70,7 +70,9 @@ function updateValues(){
         answer = Number(answer);
     }
     screen.value = answer;
-    operator = this.value; 
+    if (keyPressed === undefined){
+        operator = this.value; //only works if operator button is clicked on with mouse
+    } else operator = keyPressed; //works if a keyboard operator key is pressed
     currentNumber = "";
 }
 
@@ -95,3 +97,28 @@ function undo(){
     currentNumber = currentNumber.slice(0,currentNumber.length - 1);
     screen.value = currentNumber;
 }
+
+//Keyboard input
+
+document.addEventListener("keydown", function(event){
+    let numberKeys = ['0','1','2','3','4','5','6','7','8','9'];
+    let operatorKeys = ['+','-','*','/','='];
+    if (numberKeys.includes(event.key)){
+        updateScreen(event.key);
+    }
+    if (operatorKeys.includes(event.key)){
+        updateValues(event.key);
+    }
+    if (event.key === "Enter"){
+        updateValues("=");
+    }
+    if (event.key === "Backspace"){
+        undo();
+    }
+    if (event.key === "."){
+        updateScreen(".");
+    }
+    if (event.key === "Escape"){
+        clearAll();
+    }
+});
