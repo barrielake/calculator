@@ -54,12 +54,22 @@ operatorButtons.forEach((operatorButton) =>
     operatorButton.addEventListener("click", updateValues)); 
 
 function updateValues(){
+    
+    if (operator === "/" && currentNumber == 0){ //prevent division by zero
+        alert("Don't divide by zero, dummy.");
+        clearAll();
+        return;
+    }
     if (operator === "" || operator === "="){ 
         answer = Number(screen.value); //if it's the beginning of a new equation, the answer is simply what's already on screen
     } else{
         answer = operate(operator, answer, Number(currentNumber));
-        screen.value = answer;
     }
+    if (answer.toString().length > 12){ //prevent answers from being longer than 12 digits
+        answer = answer.toString().substr(0,12);
+        answer = Number(answer);
+    }
+    screen.value = answer;
     operator = this.value; 
     currentNumber = "";
 }
