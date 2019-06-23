@@ -1,63 +1,78 @@
+function add(a, b){
+    return a + b;
+}
+
+function subtract(a, b){
+    return a - b;
+}
+
+function multiply(a, b){
+    return a * b;
+}
+
+function divide(a, b){
+    return a / b;
+}
+
 function operate(operator, num1, num2){
-    let answer;
+    let result;
     switch (operator){
         case "+":
-            answer = num1 + num2;
+            result = add(num1, num2);
             break;
         case "-":
-            answer = num1 - num2;
+            result = subtract(num1, num2);
             break;
         case "*":
-            answer = num1 * num2;
+            result = multiply(num1, num2);
             break;
         case "/":
-            answer = num1 / num2;
+            result = divide(num1, num2);
             break;
     }
-    displayValue = "";
-    return answer;
+    //memory = ""; 
+    return result;
 }
+
+let operator = ""; 
+let currentNumber = "";
+let answer = NaN;
 
 let screen = document.querySelector(".calculator-screen");
-let displayValue = "";
-
+let operatorButtons = document.querySelectorAll(".operator");
 let numberButtons = document.querySelectorAll(".number");
-for (const numberButton of numberButtons){
-    numberButton.addEventListener("click", () => updateScreen(numberButton.value));
-}
+
+numberButtons.forEach((numberButton) => 
+    numberButton.addEventListener("click", () => updateScreen(numberButton.value)));
 
 function updateScreen(number){
-    displayValue += number;
-    screen.value = displayValue;
+    currentNumber += number; //string
+    screen.value = currentNumber;
 }
 
-let firstNumber = NaN;
-let secondNumber = NaN;
-let operator = "";
+operatorButtons.forEach((operatorButton) => 
+    operatorButton.addEventListener("click", updateValues)); 
 
-let operatorButtons = document.querySelectorAll(".operator");
-for (const operatorButton of operatorButtons){
-    operatorButton.addEventListener("click", updateValues);
+function updateValues(){
+    if (operator === "" || operator === "="){ 
+        answer = Number(screen.value); //if it's the beginning of a new equation, the answer is simply what's already on screen
+    } else{
+        answer = operate(operator, answer, Number(currentNumber));
+        screen.value = answer;
+    }
+    operator = this.value; 
+    currentNumber = "";
 }
 
 let equalsButton = document.querySelector(".equal-sign");
-equalsButton.addEventListener("click", function(){
-    secondNumber = Number(displayValue);
-    let answer = operate(operator, firstNumber, secondNumber);
-    updateScreen(answer);
-    firstNumber = NaN;
-    secondNumber = NaN;
-    displayValue = answer;
-});
+equalsButton.addEventListener("click", updateValues);
 
-function updateValues(){
-    if (Number.isNaN(firstNumber)) {
-        firstNumber = Number(displayValue);
-    } else { 
-        firstNumber = operate(operator, firstNumber, Number(displayValue));
-        screen.value = firstNumber;
-    }
-    displayValue = "";
-    //updateScreen(firstNumber);
-    operator = this.value; //the value of the operator button which called the function
+let clearButton = document.querySelector(".all-clear");
+clearButton.addEventListener("click", clearAll);
+
+function clearAll(){
+    operator = ""; 
+    currentNumber = "";
+    answer = NaN;
+    screen.value = "0";
 }
