@@ -30,13 +30,12 @@ function operate(operator, num1, num2){
             result = divide(num1, num2);
             break;
     }
-    //memory = ""; 
     return result;
 }
 
 let operator = ""; 
-let currentNumber = "";
-let answer = NaN;
+let currentNumber = ""; //The current number being inputted by user
+let answer = NaN; //The answer of the previous equation
 
 let screen = document.querySelector(".calculator-screen");
 let operatorButtons = document.querySelectorAll(".operator");
@@ -47,13 +46,17 @@ numberButtons.forEach((numberButton) =>
 
 function updateScreen(number){
     currentNumber += number; //string
-    screen.value = currentNumber;
+    screen.value = twelveDigit(currentNumber);
 }
 
 operatorButtons.forEach((operatorButton) => 
-    operatorButton.addEventListener("click", updateValues)); 
+    operatorButton.addEventListener("click", function(e){
+        input = e.target.value;
+        console.log(input);
+        updateValues(input);
+    })); 
 
-function updateValues(keyPressed){
+function updateValues(input){
     
     if (operator === "/" && currentNumber == 0){ //prevent division by zero
         alert("Don't divide by zero, dummy.");
@@ -62,22 +65,31 @@ function updateValues(keyPressed){
     }
     if (operator === "" || operator === "="){ 
         answer = Number(screen.value); //if it's the beginning of a new equation, the answer is simply what's already on screen
+        //screen.value has to be used here instead of currentNumber, because currentNumber is reset later (which would cause 'undefined' if equals is pressed twice)
     } else{
         answer = operate(operator, answer, Number(currentNumber));
     }
-    if (answer.toString().length > 12){ //prevent answers from being longer than 12 digits
-        answer = answer.toString().substr(0,12);
-        answer = Number(answer);
-    }
-    screen.value = answer;
-    if (keyPressed === undefined){
-        operator = this.value; //only works if operator button is clicked on with mouse
-    } else operator = keyPressed; //works if a keyboard operator key is pressed
+    operator = input;
+    screen.value = twelveDigit(answer);
     currentNumber = "";
 }
 
-let equalsButton = document.querySelector(".equal-sign");
-equalsButton.addEventListener("click", updateValues);
+function twelveDigit(number){ //Make sure no more than 12 digits (including decimal) are ever displayed, to prevent overflowing numbers
+    number = Number(number); //ensure it's a number type
+    numberString = String(number);
+
+    if (numberString.length <= 12) return number;
+
+    if (number % 1 !== 0){ //if number has decimals
+        let digitsBeforeDecimal = numberString.indexOf('.');
+        let spaceLeft = 11 - digitsBeforeDecimal;
+        numberString = number.toFixed(spaceLeft);
+        return Number(numberString);
+    }
+
+    numberString = numberString.substr(0,12);
+    return Number(numberString);
+}
 
 let clearButton = document.querySelector(".all-clear");
 clearButton.addEventListener("click", clearAll);
@@ -108,9 +120,6 @@ document.addEventListener("keydown", function(event){
     }
     if (operatorKeys.includes(event.key)){
         updateValues(event.key);
-    }
-    if (event.key === "Enter"){
-        updateValues("=");
     }
     if (event.key === "Backspace"){
         undo();
